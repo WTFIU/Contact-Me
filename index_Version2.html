@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact WTFIU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 0; }
+        .container { max-width: 500px; margin: 60px auto; background: #fff; padding: 32px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+        h1 { text-align: center; margin-bottom: 24px;}
+        label { display: block; margin: 12px 0 4px;}
+        input, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;}
+        button { background: #007bff; color: #fff; border: none; padding: 12px 24px; border-radius: 4px; font-size: 1em; margin-top: 16px; cursor: pointer;}
+        button:hover { background: #0056b3;}
+        .success { color: green; margin-top: 16px;}
+        .error { color: red; margin-top: 16px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Me!</h1>
+        <form action="https://formspree.io/f/mkgvolwk" method="POST" id="contact-form">
+            <label for="name">Your Name</label>
+            <input type="text" name="name" id="name" required>
+            
+            <label for="email">Your Email</label>
+            <input type="email" name="email" id="email" required>
+            
+            <label for="message">Message</label>
+            <textarea name="message" id="message" rows="6" required></textarea>
+            
+            <button type="submit">Send Message</button>
+            <div id="response"></div>
+        </form>
+    </div>
+    <script>
+        // Optional: AJAX submission for better UX
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const responseDiv = document.getElementById('response');
+
+            responseDiv.textContent = '';
+            try {
+                const res = await fetch(form.action, {
+                    method: form.method,
+                    body: data,
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (res.ok) {
+                    form.reset();
+                    responseDiv.textContent = "Thank you for your message!";
+                    responseDiv.className = "success";
+                } else {
+                    const err = await res.json();
+                    responseDiv.textContent = err.error || "Something went wrong. Please try again.";
+                    responseDiv.className = "error";
+                }
+            } catch {
+                responseDiv.textContent = "Network error. Please try again.";
+                responseDiv.className = "error";
+            }
+        });
+    </script>
+</body>
+</html>
